@@ -8,6 +8,16 @@ class Chatroom extends StatefulWidget {
 }
 
 class _ChatroomState extends State<Chatroom> {
+  final _controller = TextEditingController();
+
+  void initState() {
+    super.initState();
+  }
+
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,39 +31,57 @@ class _ChatroomState extends State<Chatroom> {
           child: SingleChildScrollView (
             child: Column(
               children: [
-                Container (
-                  decoration: BoxDecoration (
-                    color: Colors.white,
-                    border: Border.all (
-                      color: Colors.black,
-                    ),
-                  ),
-                  height: 500.0,
-                  width: 400.0,
-                  margin: const EdgeInsets.all(10.0),
-                ),
-                Container (
-                  decoration: BoxDecoration (
-                    color: Colors.white,
-                    border: Border.all (
-                      color: Colors.black,
-                    ),
-                  ),
-                  child: TextField(
-                    decoration: new InputDecoration (
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-
-                    ),
-                  ),
-                  margin: EdgeInsets.all(10.0),
-                  padding: EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                ),
+                _buildChatWindow(),
+                _buildInputFieldContainer(),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildChatWindow() {
+    return Container (
+      height: 500.0,
+      margin: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration (
+        color: Colors.white,
+        border: Border.all (color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildInputFieldContainer() {
+    return Container (
+      margin: EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+      decoration: BoxDecoration (
+        color: Colors.white,
+        border: Border.all (color: Colors.black,),
+      ),
+      child: _buildInputField(),
+    );
+  }
+
+  Widget _buildInputField() {
+    return TextField(
+      controller: _controller,
+      onSubmitted: (String value) {
+        _addInputToMessageList(value);
+      },
+      decoration: new InputDecoration (
+        border: InputBorder.none,
+        focusedBorder: InputBorder.none,
+      ),
+    );
+  }
+
+  void _addInputToMessageList(String input) {
+    setState(() {
+      _controller.clear();
+      widget._messageHistory.add(input);
+      print(widget._messageHistory);
+    });
   }
 }
