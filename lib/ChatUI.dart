@@ -31,7 +31,7 @@ class _ChatroomState extends State<Chatroom> {
           child: SingleChildScrollView (
             child: Column(
               children: [
-                _buildChatWindow(),
+                _buildChatWindowContainer(),
                 _buildInputFieldContainer(),
               ],
             ),
@@ -41,7 +41,7 @@ class _ChatroomState extends State<Chatroom> {
     );
   }
 
-  Widget _buildChatWindow() {
+  Widget _buildChatWindowContainer() {
     return Container (
       height: 500.0,
       margin: const EdgeInsets.all(10.0),
@@ -49,6 +49,18 @@ class _ChatroomState extends State<Chatroom> {
         color: Colors.white,
         border: Border.all (color: Colors.black),
       ),
+      child: _buildChatWindow(),
+    );
+  }
+
+  // Examples of ListView.builder came from the following article:
+  // https://medium.com/@DakshHub/flutter-displaying-dynamic-contents-using-listview-builder-f2cedb1a19fb
+  Widget _buildChatWindow() {
+    return ListView.builder(
+      itemCount: widget._messageHistory.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _buildChatMessage(widget._messageHistory[index]);
+      }
     );
   }
 
@@ -83,5 +95,15 @@ class _ChatroomState extends State<Chatroom> {
       widget._messageHistory.add(input);
       print(widget._messageHistory);
     });
+  }
+
+  Widget _buildChatMessage(String text) {
+    return Text (
+      text,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 30,
+      ),
+    );
   }
 }
