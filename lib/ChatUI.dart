@@ -26,12 +26,14 @@ class _ChatroomState extends State<Chatroom> {
         title: Text("Mafia Chatroom"),
       ),
       body: Container (
+        padding: EdgeInsets.all(10.0),
         color: Colors.grey[300],
         child: Center (
           child: SingleChildScrollView (
             child: Column(
               children: [
                 _buildChatWindowContainer(),
+                SizedBox(height: 10),
                 _buildInputFieldContainer(),
               ],
             ),
@@ -44,7 +46,8 @@ class _ChatroomState extends State<Chatroom> {
   Widget _buildChatWindowContainer() {
     return Container (
       height: 500.0,
-      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+      //margin: const EdgeInsets.all(10.0),
       decoration: BoxDecoration (
         color: Colors.white,
         border: Border.all (color: Colors.black),
@@ -66,7 +69,6 @@ class _ChatroomState extends State<Chatroom> {
 
   Widget _buildInputFieldContainer() {
     return Container (
-      margin: EdgeInsets.all(10.0),
       padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       decoration: BoxDecoration (
         color: Colors.white,
