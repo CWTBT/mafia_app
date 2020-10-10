@@ -1,4 +1,9 @@
+import 'dart:io';
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'Data.dart';
+import 'Dart:convert';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
@@ -9,14 +14,44 @@ class Chatroom extends StatefulWidget {
 
 class _ChatroomState extends State<Chatroom> {
   final _controller = TextEditingController();
+  Data data;
+  User player;
+  Message message;
 
   void initState() {
     super.initState();
+    data = Data();
+    player = User("Me", "127.0.0.1");
+    setupServer();
   }
 
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> setupServer() async {
+    try {
+      ServerSocket server = await ServerSocket.bind(InternetAddress.anyIPv4, ourPort);
+      server.listen(listenToSocket); // StreamSubscription<Socket>
+    } on SocketException catch (e) {
+      print(e.message);
+    }
+  }
+
+  void listenToSocket(Socket socket) {
+    socket.listen((data) {
+      setState(() {
+        handleIncomingMessage(socket.remoteAddress.address, data);
+      });
+    });
+  }
+
+  void handleIncomingMessage(String ip, Uint8List incomingData) {
+    Message received = jsonDecode(String.fromCharCodes(incomingData));
+    print("Received '$received' from '$ip'");
+    data.receive(received);
+    addInputToMessageList(received.contents);
   }
 
   @override
@@ -28,26 +63,26 @@ class _ChatroomState extends State<Chatroom> {
       body: Container (
         padding: EdgeInsets.all(10.0),
         color: Colors.grey[300],
-        child: _buildChatComponents(),
+        child: buildChatComponents(),
       ),
     );
   }
 
-  Widget _buildChatComponents() {
+  Widget buildChatComponents() {
     return Center (
       child: SingleChildScrollView (
         child: Column(
           children: [
-            _buildChatWindowContainer(),
+            buildChatWindowContainer(),
             SizedBox(height: 10),
-            _buildInputFieldContainer(),
+            buildInputFieldContainer(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChatWindowContainer() {
+  Widget buildChatWindowContainer() {
     return Container (
       height: 500.0,
       padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -55,37 +90,40 @@ class _ChatroomState extends State<Chatroom> {
         color: Colors.white,
         border: Border.all (color: Colors.black),
       ),
-      child: _buildChatWindow(),
+      child: buildChatWindow(),
     );
   }
 
   // Examples of ListView.builder came from the following article:
   // https://medium.com/@DakshHub/flutter-displaying-dynamic-contents-using-listview-builder-f2cedb1a19fb
-  Widget _buildChatWindow() {
+  Widget buildChatWindow() {
     return ListView.builder(
       itemCount: widget._messageHistory.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildChatMessage(widget._messageHistory[index]);
+        return buildChatMessage(widget._messageHistory[index]);
       }
     );
   }
 
-  Widget _buildInputFieldContainer() {
+  Widget buildInputFieldContainer() {
     return Container (
       padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       decoration: BoxDecoration (
         color: Colors.white,
         border: Border.all (color: Colors.black,),
       ),
-      child: _buildInputField(),
+      child: buildInputField(),
     );
   }
 
-  Widget _buildInputField() {
+  Widget buildInputField() {
     return TextField(
       controller: _controller,
       onSubmitted: (String value) {
-        _addInputToMessageList(value);
+        addInputToMessageList(value);
+        message = Message(value, player);
+        data.sendToAll(message);
+        print(message.contents + "(" + message.sender.name + " " + message.sender.ipAddr + ")");
       },
       decoration: new InputDecoration (
         border: InputBorder.none,
@@ -94,7 +132,7 @@ class _ChatroomState extends State<Chatroom> {
     );
   }
 
-  void _addInputToMessageList(String input) {
+  void addInputToMessageList(String input) {
     setState(() {
       _controller.clear();
       widget._messageHistory.add(input);
@@ -102,7 +140,7 @@ class _ChatroomState extends State<Chatroom> {
     });
   }
 
-  Widget _buildChatMessage(String text) {
+  Widget buildChatMessage(String text) {
     return Text (
       text,
       style: TextStyle(
@@ -111,4 +149,5 @@ class _ChatroomState extends State<Chatroom> {
       ),
     );
   }
+
 }
