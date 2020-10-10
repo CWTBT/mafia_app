@@ -58,6 +58,12 @@ class Message {
       : contents = json['contents'],
         sender = json['sender'];
 
+  Map<String, dynamic> toJson() =>
+      {
+        'contents': contents,
+        'sender': sender,
+      };
+
   Message(this.contents, this.sender);
 }
 
