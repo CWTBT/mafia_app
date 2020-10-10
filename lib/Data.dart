@@ -46,12 +46,17 @@ class Data {
       return SocketOutcome(errorMsg: e.message);
     }
   }
+
 }
 
 class Message {
   final String contents;
   final User sender;
   //final int timeStamp;
+
+  Message.fromJson(Map<String, dynamic> json)
+      : contents = json['contents'],
+        sender = json['sender'];
 
   Message(this.contents, this.sender);
 }

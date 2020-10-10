@@ -48,7 +48,9 @@ class _ChatroomState extends State<Chatroom> {
   }
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
-    Message received = jsonDecode(String.fromCharCodes(incomingData));
+    String jsonString = String.fromCharCodes(incomingData);
+    Map userMap = jsonDecode(jsonString);
+    Message received = Message.fromJson(userMap);
     print("Received '$received' from '$ip'");
     data.receive(received);
     addInputToMessageList(received.contents);
