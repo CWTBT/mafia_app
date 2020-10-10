@@ -13,13 +13,16 @@ class Data {
     if(connectedPlayers.length < 7) {
       connectedPlayers.add(user.name);
       playerIPs.add(user.ipAddr);
-      send(Message("Connected", user), user.ipAddr);
+      Message temp = Message("Connected", user);
+      send(temp, user.ipAddr);
+      messageHistory.add(temp);
     } else{
       print("Room has reached capacity");
     }
   }
 
   void sendToAll(Message message) {
+    messageHistory.add(message);
     playerIPs.forEach((ipAddr) {
       send(message, ipAddr);
     });
