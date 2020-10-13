@@ -15,13 +15,21 @@ class Chatroom extends StatefulWidget {
 class _ChatroomState extends State<Chatroom> {
   final _controller = TextEditingController();
   Data data;
-  User player;
+  User player, anon, anon1, anon2;
   Message message;
 
   void initState() {
     super.initState();
     data = Data();
     player = User("Me", "127.0.0.1");
+    anon = User("anon", "192.168.0.12");
+    data.addUser(anon);
+    /*
+    anon1 = User("anon1", "98.22.46.80");
+    data.addUser(anon1);
+    anon2 = User("anon2", "108.175.240.65");
+    data.addUser(anon2);
+     */
     setupServer();
   }
 
@@ -51,7 +59,6 @@ class _ChatroomState extends State<Chatroom> {
     String jsonString = String.fromCharCodes(incomingData);
     Map userMap = jsonDecode(jsonString);
     Message received = Message.fromJson(userMap);
-    print("Received '$received' from '$ip'");
     data.receive(received);
     addInputToMessageList(received.contents);
   }
@@ -124,8 +131,8 @@ class _ChatroomState extends State<Chatroom> {
       onSubmitted: (String value) {
         addInputToMessageList(value);
         message = Message(value, player);
+        print("(" + message.sender.name + " " + message.sender.ipAddr + "): " + message.contents);
         data.sendToAll(message);
-        print(message.contents + "(" + message.sender.name + " " + message.sender.ipAddr + ")");
       },
       decoration: new InputDecoration (
         border: InputBorder.none,
@@ -138,7 +145,6 @@ class _ChatroomState extends State<Chatroom> {
     setState(() {
       _controller.clear();
       widget._messageHistory.add(input);
-      print(widget._messageHistory);
     });
   }
 

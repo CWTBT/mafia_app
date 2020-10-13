@@ -5,9 +5,9 @@ import 'Dart:convert';
 const int ourPort = 6969;
 
 class Data {
-  List<Message> messageHistory;
-  List<String> connectedPlayers;
-  List<String> playerIPs;
+  List<Message> messageHistory = [];
+  List<String> connectedPlayers = [];
+  List<String> playerIPs = [];
 
   void addUser(User user) {
     if(connectedPlayers.length < 7) {
@@ -24,6 +24,7 @@ class Data {
   void sendToAll(Message message) {
     messageHistory.add(message);
     playerIPs.forEach((ipAddr) {
+      print("sending to: " + ipAddr);
       send(message, ipAddr);
     });
   }
@@ -31,6 +32,7 @@ class Data {
   void receive(Message message) {
     Message receivedMessage = message;
     messageHistory.add(receivedMessage);
+    print("receiving " + message.contents);
     if(!playerIPs.contains(message.sender.ipAddr)){
       addUser(message.sender);
     }
@@ -38,11 +40,13 @@ class Data {
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
     try {
+      Map<String,dynamic> msgJson = messageSent.toJson();
       Socket socket = await Socket.connect(ipAddr, ourPort);
-      socket.write(jsonEncode(messageSent));
+      socket.write(jsonEncode(msgJson));
       socket.close();
       return SocketOutcome();
     } on SocketException catch (e) {
+      print("didn't send");
       return SocketOutcome(errorMsg: e.message);
     }
   }
@@ -56,12 +60,12 @@ class Message {
 
   Message.fromJson(Map<String, dynamic> json)
       : contents = json['contents'],
-        sender = json['sender'];
+        sender = User.fromJson(json['sender']);
 
   Map<String, dynamic> toJson() =>
       {
         'contents': contents,
-        'sender': sender,
+        'sender': sender.toJson(),
       };
 
   Message(this.contents, this.sender);
@@ -70,6 +74,16 @@ class Message {
 class User {
   final String name;
   final String ipAddr;
+
+  User.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        ipAddr = json['ipAddr'];
+
+  Map<String, dynamic> toJson() =>
+      {
+        'name': name,
+        'ipAddr': ipAddr,
+      };
 
   User(this.name, this.ipAddr);
 }
