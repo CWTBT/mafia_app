@@ -13,12 +13,19 @@ class Data {
     if(connectedPlayers.length < 7) {
       connectedPlayers.add(user.name);
       playerIPs.add(user.ipAddr);
-      Message temp = Message("Connected", user);
-      send(temp, user.ipAddr);
+      Message temp = Message(user.name + " Connected", user);
+      sendToAll(temp);
       messageHistory.add(temp);
     } else{
       print("Room has reached capacity");
     }
+  }
+
+  void userRemoved(Data data, User removed){
+    data.playerIPs.remove(removed.ipAddr);
+    data.connectedPlayers.remove(removed.name);
+    Message temp = Message(removed.name + " Disconnected", removed);
+    sendToAll(temp);
   }
 
   void sendToAll(Message message) {
