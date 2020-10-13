@@ -31,7 +31,7 @@ class Data {
   void sendToAll(Message message) {
     messageHistory.add(message);
     playerIPs.forEach((ipAddr) {
-      print("sending to: " + ipAddr);
+      print("sending to: " + message.sender.name);
       send(message, ipAddr);
     });
   }
