@@ -22,7 +22,6 @@ class _ChatroomState extends State<Chatroom> {
     super.initState();
     data = Data();
     player = User("You", "127.0.0.1");
-    /*
     data.addUser(player);
     anon = User("anon", "192.168.0.12");
     data.addUser(anon);
@@ -30,7 +29,6 @@ class _ChatroomState extends State<Chatroom> {
     data.addUser(anon1);
     anon2 = User("anon2", "108.175.240.65");
     data.addUser(anon2);
-     */
     setupServer();
   }
 
