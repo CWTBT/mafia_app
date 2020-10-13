@@ -23,7 +23,7 @@ class _ChatroomState extends State<Chatroom> {
     data = Data();
     player = User("You", "127.0.0.1");
     data.addUser(player);
-    anon = User("anon", "192.168.0.12");
+    anon = User("anon", "68.179.251.5");
     data.addUser(anon);
     anon1 = User("anon1", "98.22.46.80");
     data.addUser(anon1);

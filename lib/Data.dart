@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'Dart:convert';
 
-const int ourPort = 6969;
+const int ourPort = 8080;
 
 class Data {
   List<Message> messageHistory = [];
@@ -31,7 +31,7 @@ class Data {
   void sendToAll(Message message) {
     messageHistory.add(message);
     playerIPs.forEach((ipAddr) {
-      print("sending to: " + message.sender.name);
+      print("sending to: " + ipAddr);
       send(message, ipAddr);
     });
   }
@@ -53,7 +53,7 @@ class Data {
       socket.close();
       return SocketOutcome();
     } on SocketException catch (e) {
-      print("didn't send");
+      print("didn't send to: " + ipAddr);
       return SocketOutcome(errorMsg: e.message);
     }
   }
