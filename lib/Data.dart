@@ -10,7 +10,7 @@ class Data {
   List<String> playerIPs = [];
 
   void addUser(User user) {
-    if(connectedPlayers.length < 7) {
+    if(connectedPlayers.length < 6) {
       connectedPlayers.add(user.name);
       playerIPs.add(user.ipAddr);
       Message temp = Message(user.name + " Connected", user);

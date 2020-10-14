@@ -17,18 +17,12 @@ class _ChatroomState extends State<Chatroom> {
   Data data;
   User player, anon, anon1, anon2;
   Message message;
+  String name, ip;
 
   void initState() {
     super.initState();
     data = Data();
     player = User("You", "127.0.0.1");
-    data.addUser(player);
-    anon = User("anon", "68.179.251.5");
-    data.addUser(anon);
-    anon1 = User("anon1", "98.22.46.80");
-    data.addUser(anon1);
-    anon2 = User("anon2", "108.175.240.65");
-    data.addUser(anon2);
     setupServer();
   }
 
@@ -60,6 +54,10 @@ class _ChatroomState extends State<Chatroom> {
     Message received = Message.fromJson(userMap);
     data.receive(received);
     addInputToMessageList(received.contents);
+  }
+
+  void addUser(User user){
+    data.addUser(user);
   }
 
   @override
@@ -156,5 +154,4 @@ class _ChatroomState extends State<Chatroom> {
       ),
     );
   }
-
 }
