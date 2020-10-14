@@ -23,6 +23,7 @@ class _ChatroomState extends State<Chatroom> {
     super.initState();
     data = Data();
     player = User("You", "127.0.0.1");
+    data.addUser(player);
     setupServer();
   }
 
@@ -51,13 +52,15 @@ class _ChatroomState extends State<Chatroom> {
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
     Map userMap = jsonDecode(jsonString);
-    Message received = Message.fromJson(userMap);
+    Message temp = Message.fromJson(userMap);
+    Message received = Message(temp.contents, User(temp.sender.name, ip));
     data.receive(received);
     addInputToMessageList(received.contents);
   }
 
-  void addUser(User user){
-    data.addUser(user);
+  void addUser(){
+    anon = new User(name, ip);
+    data.addUser(anon);
   }
 
   @override
@@ -82,6 +85,19 @@ class _ChatroomState extends State<Chatroom> {
             buildChatWindowContainer(),
             SizedBox(height: 10),
             buildInputFieldContainer(),
+            TextField(
+                onChanged: (text) {
+                  name = text;
+                },
+                decoration: InputDecoration(
+                    hintText: 'Enter Name')),
+            TextField(
+                onChanged: (text) {
+                  ip = text;
+                },
+                decoration: InputDecoration(
+                    hintText: 'Enter IP')),
+            FloatingActionButton(child: Icon(Icons.add), onPressed: addUser),
           ],
         ),
       ),
