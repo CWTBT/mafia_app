@@ -10,7 +10,7 @@ class Data {
   List<String> playerIPs = [];
 
   void addUser(User user) {
-    if(connectedPlayers.length < 6) {
+    if(connectedPlayers.length < 7) {
       connectedPlayers.add(user.name);
       playerIPs.add(user.ipAddr);
       Message temp = Message(user.name + " Connected", user);
@@ -30,9 +30,12 @@ class Data {
 
   void sendToAll(Message message) {
     messageHistory.add(message);
+    print(playerIPs);
     playerIPs.forEach((ipAddr) {
-      print("sending to: " + ipAddr);
-      send(message, ipAddr);
+      if(ipAddr != message.sender.ipAddr) {
+        print("sending to: " + ipAddr);
+        send(message, ipAddr);
+      }
     });
   }
 
@@ -40,9 +43,11 @@ class Data {
     Message receivedMessage = message;
     messageHistory.add(receivedMessage);
     print("receiving " + message.contents);
+    print("sent from " + message.sender.ipAddr);
     if(!playerIPs.contains(message.sender.ipAddr)){
       addUser(message.sender);
     }
+    print(playerIPs);
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
