@@ -8,14 +8,15 @@ class Data {
   List<Message> messageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
+  String myIp;
 
   void addUser(User user) {
     if(connectedPlayers.length < 7) {
       connectedPlayers.add(user.name);
       playerIPs.add(user.ipAddr);
-      Message temp = Message(user.name + " Connected", user);
-      sendToAll(temp);
-      messageHistory.add(temp);
+      Message added = Message(user.name + " Connected", user);
+      sendToAll(added);
+      messageHistory.add(added);
     } else{
       print("Room has reached capacity");
     }
@@ -32,10 +33,10 @@ class Data {
     messageHistory.add(message);
     print(playerIPs);
     playerIPs.forEach((ipAddr) {
-      if(ipAddr != message.sender.ipAddr) {
+      //if(ipAddr != message.sender.ipAddr) {
         print("sending to: " + ipAddr);
         send(message, ipAddr);
-      }
+      //}
     });
   }
 
@@ -43,18 +44,14 @@ class Data {
     Message receivedMessage = message;
     messageHistory.add(receivedMessage);
     print("receiving " + message.contents);
-    print("sent from " + message.sender.ipAddr);
-    if(!playerIPs.contains(message.sender.ipAddr)){
-      addUser(message.sender);
-    }
-    print(playerIPs);
+
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
     try {
       Map<String,dynamic> msgJson = messageSent.toJson();
       Socket socket = await Socket.connect(ipAddr, ourPort);
-      socket.write(jsonEncode(msgJson));
+      socket.write(jsonEncode(msgJson) + jsonEncode(playerIPs) + jsonEncode(connectedPlayers));
       socket.close();
       return SocketOutcome();
     } on SocketException catch (e) {
@@ -62,7 +59,6 @@ class Data {
       return SocketOutcome(errorMsg: e.message);
     }
   }
-
 }
 
 class Message {
