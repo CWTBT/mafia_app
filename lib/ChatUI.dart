@@ -54,12 +54,13 @@ class _ChatroomState extends State<Chatroom> {
     String stringData = jsonString.substring(jsonString.lastIndexOf("}")+1, jsonString.length);
     String ips = stringData.substring(0, stringData.indexOf("]") + 1);
     String names = stringData.substring(stringData.indexOf("]") + 1, stringData.length);
-    print(ips + names);
+    List<dynamic> ipList = jsonDecode(ips);
+    List<dynamic> namesList = jsonDecode(names);
     jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
     Map userMap = jsonDecode(jsonString);
     Message temp = Message.fromJson(userMap);
     Message received = Message(temp.contents, User(temp.sender.name, ip));
-    data.receive(received);
+    data.receive(received, ipList, namesList, ip);
     addInputToMessageList(received.contents);
   }
 

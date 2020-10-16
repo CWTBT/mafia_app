@@ -8,15 +8,21 @@ class Data {
   List<Message> messageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
+  List<String> playerRoles = [];
   String myIp;
+  bool dead = false;
 
   void addUser(User user) {
     if(connectedPlayers.length < 7) {
-      connectedPlayers.add(user.name);
-      playerIPs.add(user.ipAddr);
-      Message added = Message(user.name + " Connected", user);
-      sendToAll(added);
-      messageHistory.add(added);
+      if(!playerIPs.contains(user.ipAddr)) {
+        connectedPlayers.add(user.name);
+        playerIPs.add(user.ipAddr);
+        Message added = Message(user.name + " Connected", user);
+        sendToAll(added);
+        messageHistory.add(added);
+      }else{
+        print("User is already added");
+      }
     } else{
       print("Room has reached capacity");
     }
@@ -33,18 +39,27 @@ class Data {
     messageHistory.add(message);
     print(playerIPs);
     playerIPs.forEach((ipAddr) {
-      //if(ipAddr != message.sender.ipAddr) {
+      if(ipAddr != message.sender.ipAddr) {
         print("sending to: " + ipAddr);
         send(message, ipAddr);
-      //}
+      }
     });
   }
 
-  void receive(Message message) {
-    Message receivedMessage = message;
-    messageHistory.add(receivedMessage);
+  void receive(Message message, List<dynamic> ipList, List<dynamic> nameList, String ip) {
+    messageHistory.add(message);
+    if(!playerIPs.contains(ip)) {
+      myIp = ipList[ipList.length - 1];
+      addUser(User(message.sender.name, ip));
+    }
+    if(playerIPs.length < ipList.length){
+      for(int i = 0; i < ipList.length; i++){
+        if(!playerIPs.contains(ipList[i]) && ipList[i] != myIp){
+          addUser(User(nameList[i], ipList[i]));
+        }
+      }
+    }
     print("receiving " + message.contents);
-
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
