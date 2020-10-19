@@ -44,7 +44,8 @@ void main(){
     expect(youData.connectedPlayers.length, meData.connectedPlayers.length);
     expect(youData.playerIPs.length, meData.playerIPs.length);
   });
-  test('Test 8 Players', () async{
+  /*test('Test 8 Players', () async{
 
   });
+   */
 }
