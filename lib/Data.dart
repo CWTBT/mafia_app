@@ -28,13 +28,6 @@ class Data {
     }
   }
 
-  void userRemoved(Data data, User removed){
-    data.playerIPs.remove(removed.ipAddr);
-    data.connectedPlayers.remove(removed.name);
-    Message temp = Message(removed.name + " Disconnected", removed);
-    sendToAll(temp);
-  }
-
   void sendToAll(Message message) {
     messageHistory.add(message);
     print(playerIPs);

@@ -51,9 +51,10 @@ class _ChatroomState extends State<Chatroom> {
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
-    String stringData = jsonString.substring(jsonString.lastIndexOf("}")+1, jsonString.length);
-    String ips = stringData.substring(0, stringData.indexOf("]") + 1);
-    String names = stringData.substring(stringData.indexOf("]") + 1, stringData.length);
+    String ips = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
+    jsonString.replaceFirst(ips, "");
+    String names = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
+    jsonString.replaceFirst(names, "");
     List<dynamic> ipList = jsonDecode(ips);
     List<dynamic> namesList = jsonDecode(names);
     jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
