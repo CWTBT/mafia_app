@@ -9,7 +9,12 @@ void main () {
 
   test('Each player gets a role', () {
     MafiaGame game = new MafiaGame(["Alice", "Bob", "Carlos", "Diane", "Evan", "Frank", "Gibby"]);
-    print(game.roleMap);
     expect(game.roleMap.length, equals(game.playerList.length));
+  });
+
+  test('Each player gets a role', () {
+    MafiaGame game = new MafiaGame(["Alice", "Bob", "Carlos", "Diane", "Evan", "Frank", "Gibby"]);
+    Map voteMap = {"Alice":0, "Bob":1, "Carlos":3, "Diane":1, "Evan":0, "Frank":0, "Gibby": 2};
+    expect(game.countVotes(voteMap), equals("Carlos"));
   });
 }
