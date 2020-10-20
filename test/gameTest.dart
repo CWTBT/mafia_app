@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:text_messenger/MafiaGame.dart';
 import 'package:text_messenger/Data.dart';
+import 'package:text_messenger/Role.dart';
 
 void main () {
   List<String> playerNamesList = ["Alice", "Bob", "Carlos", "Diane", "Evan", "Frank", "Gibby"];
@@ -38,5 +39,31 @@ void main () {
     game.killUser(mostVotedName);
     User carlos = game.getUser("Carlos");
     expect(carlos.isAlive, equals(false));
+  });
+
+  test('Ongoing game is not ended early', () {
+    MafiaGame game = new MafiaGame(playerList);
+    expect(game.isOver(), equals(false));
+  });
+
+  test('Ongoing game is not ended early', () {
+    MafiaGame game = new MafiaGame(playerList);
+    expect(game.isOver(), equals(false));
+  });
+
+  test('Game ends when mafia count == town count', () {
+    MafiaGame game = new MafiaGame(playerList);
+    List<String> townies = [];
+    game.roleMap.forEach((k,v) {
+      if(v != Role.MAFIA) townies.add(k.name);
+    });
+
+    List<bool> gameStates = [];
+    for (int i = 0; i < 3; i++) {
+      game.killUser(townies[i]);
+      gameStates.add(game.isOver());
+    }
+
+    expect(gameStates, equals([false, false, true]));
   });
 }

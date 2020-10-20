@@ -81,6 +81,10 @@ class MafiaGame {
     else _stateValue += 1;
   }
 
+  bool isOver() {
+    return scumCount == townCount ? true : false;
+  }
+
   GameState getState() {
     return GameState.values[_stateValue];
   }
