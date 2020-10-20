@@ -51,17 +51,7 @@ class _ChatroomState extends State<Chatroom> {
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
-    String ips = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
-    jsonString.replaceFirst(ips, "");
-    String names = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
-    jsonString.replaceFirst(names, "");
-    List<dynamic> ipList = jsonDecode(ips);
-    List<dynamic> namesList = jsonDecode(names);
-    jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
-    Map userMap = jsonDecode(jsonString);
-    Message temp = Message.fromJson(userMap);
-    Message received = Message(temp.contents, User(temp.sender.name, ip));
-    data.receive(received, ipList, namesList, ip);
+    Message received = data.receive(jsonString, ip);
     addInputToMessageList(received.contents);
   }
 

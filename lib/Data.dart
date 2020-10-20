@@ -8,9 +8,7 @@ class Data {
   List<Message> messageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
-  List<String> playerRoles = [];
   String myIp;
-  bool dead = false;
 
   void addUser(User user) {
     if(connectedPlayers.length < 7) {
@@ -39,8 +37,14 @@ class Data {
     });
   }
 
-  void receive(Message message, List<dynamic> ipList, List<dynamic> nameList, String ip) {
+  Message receive(String jsonString, String ip) {
+    Message message = deserializeMessage(jsonString, ip);
     messageHistory.add(message);
+    String listIp = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
+    jsonString.replaceFirst(listIp, " ");
+    String listName = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
+    List<dynamic> ipList = jsonDecode(listIp);
+    List<dynamic> namesList = jsonDecode(listName);
     if(!playerIPs.contains(ip)) {
       myIp = ipList[ipList.length - 1];
       addUser(User(message.sender.name, ip));
@@ -48,11 +52,19 @@ class Data {
     if(playerIPs.length < ipList.length){
       for(int i = 0; i < ipList.length; i++){
         if(!playerIPs.contains(ipList[i]) && ipList[i] != myIp){
-          addUser(User(nameList[i], ipList[i]));
+          addUser(User(namesList[i], ipList[i]));
         }
       }
     }
-    print("receiving " + message.contents);
+    return message;
+  }
+
+  Message deserializeMessage(String jsonString, String ip){
+    jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
+    Map userMap = jsonDecode(jsonString);
+    Message temp = Message.fromJson(userMap);
+    Message received = Message(temp.contents, User(temp.sender.name, ip));
+    return received;
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
