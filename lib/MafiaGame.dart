@@ -6,10 +6,12 @@ class MafiaGame {
   int townCount;
   Map roleMap = new Map();
   Map _namesToPlayers = new Map();
+  int _stateValue;
 
   MafiaGame(this.userList) {
     _initializeRoles();
     _initializeNamesMap();
+    _stateValue = 0;
 
     // These are hardcoded since we only allow one configuration of roles.
     scumCount = 2;
@@ -71,6 +73,15 @@ class MafiaGame {
   User getUser(String userName) {
     return _namesToPlayers[userName];
   }
+
+  void progressGameState() {
+    if (_stateValue == 5)  _stateValue = 0;
+    else _stateValue += 1;
+  }
+
+  GameState getState() {
+    return GameState.values[_stateValue];
+  }
 }
 
 enum Role {
@@ -78,4 +89,13 @@ enum Role {
   MAFIA,
   DETECTIVE,
   DOCTOR
+}
+
+enum GameState {
+  DAY_CHAT,
+  DAY_VOTE,
+  NIGHT_CHAT,
+  NIGHT_VOTE,
+  DETECTIVE_CHOOSE,
+  DOCTOR_CHOOSE,
 }
