@@ -97,6 +97,7 @@ class Message {
 class User {
   final String name;
   final String ipAddr;
+  bool isAlive = true;
 
   User.fromJson(Map<String, dynamic> json)
       : name = json['name'],
@@ -107,6 +108,10 @@ class User {
         'name': name,
         'ipAddr': ipAddr,
       };
+
+  String toString() {
+    return name;
+  }
 
   User(this.name, this.ipAddr);
 }

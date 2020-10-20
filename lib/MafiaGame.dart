@@ -1,5 +1,7 @@
+import 'Data.dart';
+
 class MafiaGame {
-  List<String> playerList;
+  List<User> playerList;
   Map roleMap = new Map();
 
   MafiaGame(this.playerList) {
