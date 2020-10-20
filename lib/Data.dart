@@ -6,8 +6,10 @@ const int ourPort = 8080;
 
 class Data {
   List<Message> messageHistory = [];
+  List<Message> mafiaMessageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
+  Map votes = new Map();
   String myIp;
 
   void addUser(User user) {
@@ -37,7 +39,7 @@ class Data {
     });
   }
 
-  Message receive(String jsonString, String ip) {
+  Message receiveMessage(String jsonString, String ip) {
     Message message = deserializeMessage(jsonString, ip);
     messageHistory.add(message);
     String listIp = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
@@ -57,6 +59,10 @@ class Data {
       }
     }
     return message;
+  }
+
+  Message receiveVote(String jsonString){
+
   }
 
   Message deserializeMessage(String jsonString, String ip){
@@ -102,6 +108,7 @@ class Message {
 class User {
   final String name;
   final String ipAddr;
+  String role;
 
   User.fromJson(Map<String, dynamic> json)
       : name = json['name'],

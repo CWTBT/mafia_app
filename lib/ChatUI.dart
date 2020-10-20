@@ -51,7 +51,7 @@ class _ChatroomState extends State<Chatroom> {
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
-    Message received = data.receive(jsonString, ip);
+    Message received = data.receiveMessage(jsonString, ip);
     addInputToMessageList(received.contents);
   }
 
