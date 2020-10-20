@@ -1,4 +1,6 @@
 import 'Data.dart';
+import 'GameState.dart';
+import 'Role.dart';
 
 class MafiaGame {
   List<User> userList;
@@ -82,20 +84,4 @@ class MafiaGame {
   GameState getState() {
     return GameState.values[_stateValue];
   }
-}
-
-enum Role {
-  TOWNIE,
-  MAFIA,
-  DETECTIVE,
-  DOCTOR
-}
-
-enum GameState {
-  DAY_CHAT,
-  DAY_VOTE,
-  NIGHT_CHAT,
-  NIGHT_VOTE,
-  DETECTIVE_CHOOSE,
-  DOCTOR_CHOOSE,
 }

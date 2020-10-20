@@ -8,9 +8,7 @@ class Data {
   List<Message> messageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
-  List<String> playerRoles = [];
   String myIp;
-  bool dead = false;
 
   void addUser(User user) {
     if(connectedPlayers.length < 7) {
@@ -79,7 +77,6 @@ class Data {
 class Message {
   final String contents;
   final User sender;
-  //final int timeStamp;
 
   Message.fromJson(Map<String, dynamic> json)
       : contents = json['contents'],
