@@ -16,12 +16,18 @@ void main () {
 
   test('Each player gets a role', () {
     MafiaGame game = new MafiaGame(playerList);
-    expect(game.roleMap.length, equals(game.playerList.length));
+    expect(game.roleMap.length, equals(game.userList.length));
   });
 
-  test('Each player gets a role', () {
+  test('Highest voted player is selected correctly', () {
     MafiaGame game = new MafiaGame(playerList);
     Map voteMap = {"Alice":0, "Bob":1, "Carlos":3, "Diane":1, "Evan":0, "Frank":0, "Gibby": 2};
-    expect(game.countVotes(voteMap), equals("Carlos"));
+    expect(game.countVotes(voteMap), equals(["Carlos"]));
+  });
+
+  test('Ties are handled correctly.', () {
+    MafiaGame game = new MafiaGame(playerList);
+    Map voteMap = {"Alice":0, "Bob":1, "Carlos":2, "Diane":2, "Evan":0, "Frank":1, "Gibby":1};
+    expect(game.countVotes(voteMap), equals(["Carlos", "Diane"]));
   });
 }
