@@ -30,4 +30,13 @@ void main () {
     Map voteMap = {"Alice":0, "Bob":1, "Carlos":2, "Diane":2, "Evan":0, "Frank":1, "Gibby":1};
     expect(game.countVotes(voteMap), equals(["Carlos", "Diane"]));
   });
+
+  test('Highest voted player is successfully killed.', () {
+    MafiaGame game = new MafiaGame(playerList);
+    Map voteMap = {"Alice":0, "Bob":1, "Carlos":3, "Diane":1, "Evan":0, "Frank":0, "Gibby": 2};
+    String mostVotedName = game.countVotes(voteMap)[0];
+    game.killUser(mostVotedName);
+    User carlos = game.getUser("Carlos");
+    expect(carlos.isAlive, equals(false));
+  });
 }

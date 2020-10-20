@@ -2,17 +2,31 @@ import 'Data.dart';
 
 class MafiaGame {
   List<User> userList;
+  int scumCount;
+  int townCount;
   Map roleMap = new Map();
+  Map _namesToPlayers = new Map();
 
   MafiaGame(this.userList) {
     _initializeRoles();
+    _initializeNamesMap();
+
+    // These are hardcoded since we only allow one configuration of roles.
+    scumCount = 2;
+    townCount = 5;
+  }
+
+  void _initializeNamesMap() {
+    userList.forEach((u) {
+      _namesToPlayers[u.name] = u;
+    });
   }
 
   // Current solution to tied votes is to return a list of highest voted players
   // and have the calling function check to see if the length > 1.
   List<String> countVotes(Map playersToVotes) {
     int highestVoteCount = 0;
-    List<String> mostVotedPlayers = [""];
+    List<String> mostVotedPlayers = [];
     playersToVotes.forEach((k,v) {
       if (v > highestVoteCount) {
         highestVoteCount = v;
@@ -42,8 +56,20 @@ class MafiaGame {
     }
   }
 
-  void killUser(User u) {
+  void killUser(String uName) {
+    User u = getUser(uName);
     u.isAlive = false;
+    roleMap[u] == Role.MAFIA ? scumCount -= 1 : townCount -= 1;
+  }
+
+  void reviveUser(String uName) {
+    User u = getUser(uName);
+    u.isAlive = true;
+    roleMap[u] == Role.MAFIA ? scumCount += 1 : townCount += 1;
+  }
+
+  User getUser(String userName) {
+    return _namesToPlayers[userName];
   }
 }
 
