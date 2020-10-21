@@ -93,6 +93,11 @@ class Data {
   GameState getState() {
     return GameState.values[game.stateValue];
   }
+
+  void updateState() {
+    if (game.stateValue == 6)  game.stateValue = 1;
+    else game.stateValue += 1;
+  }
 }
 
 class Message {

@@ -80,11 +80,6 @@ class MafiaGame {
     return _namesToPlayers[userName];
   }
 
-  void progressGameState() {
-    if (stateValue == 6)  stateValue = 1;
-    else stateValue += 1;
-  }
-
   bool isOver() {
     return scumCount == townCount ? true : false;
   }

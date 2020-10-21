@@ -79,7 +79,7 @@ class _ChatroomState extends State<Chatroom> {
       case GameState.DAY_CHAT: {
         return Scaffold (
           appBar: AppBar(
-            title: Text("Mafia Chatroom"),
+            title: Text("Daytime Chatroom"),
           ),
           body: Container (
             padding: EdgeInsets.all(10.0),
