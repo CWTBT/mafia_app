@@ -116,6 +116,7 @@ class _ChatroomState extends State<Chatroom> {
     data.addUser(User(name, ip));
     if (data.connectedPlayers.length == 4) {
       setState(() {
+        data.startGame(data.connectedPlayers);
         data.updateState();
       });
     }
@@ -407,7 +408,9 @@ class _ChatroomState extends State<Chatroom> {
           }
           else {
             if (_voted) return;
+            if (!data.getUser(userName).isAlive) return;
             _voted = true;
+            data.game.killUser(userName);
             data.sendToAll(m);
           }
         }),
