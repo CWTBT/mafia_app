@@ -23,5 +23,4 @@ class joiningScreen extends StatelessWidget {
         )
     );
   }
-
 }
