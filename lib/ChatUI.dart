@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
@@ -66,7 +67,13 @@ class _ChatroomState extends State<Chatroom> {
       }
       break;
 
-      case 'NIGHT_CHAT':
+      case 'NIGHT_CHAT':{
+        print("mafia chat");
+        received = data.receiveMafia(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
+
       case 'DAY_CHAT': {
         print("chat");
         received = data.receiveMessage(jsonString, ip);
@@ -78,7 +85,6 @@ class _ChatroomState extends State<Chatroom> {
       case 'NIGHT_VOTE':{
         print("vote");
         received = data.receiveVote(jsonString, ip);
-        addInputToMessageList(received);
       }
       break;
 
