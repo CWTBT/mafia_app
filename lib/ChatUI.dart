@@ -9,6 +9,7 @@ import 'Message.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
+  final List<String> _mafiaMessageHistory = new List();
 
   @override
   _ChatroomState createState() => _ChatroomState();
@@ -266,12 +267,22 @@ class _ChatroomState extends State<Chatroom> {
   // Examples of ListView.builder came from the following article:
   // https://medium.com/@DakshHub/flutter-displaying-dynamic-contents-using-listview-builder-f2cedb1a19fb
   Widget buildChatWindow() {
-    return ListView.builder(
-      itemCount: widget._messageHistory.length,
-      itemBuilder: (BuildContext context, int index) {
-        return buildChatMessage(widget._messageHistory[index]);
-      }
-    );
+    if (state == GameState.DAY_CHAT) {
+      return ListView.builder(
+        itemCount: widget._messageHistory.length,
+          itemBuilder: (BuildContext context, int index) {
+            return buildChatMessage(widget._messageHistory[index]);
+          }
+      );
+    }
+    else if (state == GameState.NIGHT_CHAT) {
+      return ListView.builder(
+          itemCount: widget._mafiaMessageHistory.length,
+          itemBuilder: (BuildContext context, int index) {
+            return buildChatMessage(widget._mafiaMessageHistory[index]);
+          }
+      );
+    }
   }
 
   Widget buildInputFieldContainer() {
@@ -302,10 +313,20 @@ class _ChatroomState extends State<Chatroom> {
   }
 
   void addInputToMessageList(Message message) {
-    setState(() {
-      _controller.clear();
-      widget._messageHistory.add(message.sender.name + ": " + message.contents);
-    });
+    if (state == GameState.DAY_CHAT) {
+      setState(() {
+        _controller.clear();
+        widget._messageHistory.add(
+            message.sender.name + ": " + message.contents);
+      });
+    }
+    else if (state == GameState.NIGHT_CHAT) {
+      setState(() {
+        _controller.clear();
+        widget._mafiaMessageHistory.add(
+            message.sender.name + ": " + message.contents);
+      });
+    }
   }
 
   Widget buildChatMessage(String text) {
