@@ -19,12 +19,15 @@ class _ChatroomState extends State<Chatroom> {
   User player;
   Message message;
   String name, ip;
+  GameState state;
+  bool _timerStarted;
 
   void initState() {
     super.initState();
     data = Data();
     player = User("You", "127.0.0.1");
     data.addUser(player);
+    _timerStarted = false;
     setupServer();
   }
 
@@ -58,11 +61,16 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
+    if (data.connectedPlayers.length == 7) {
+      setState(() {
+        data.updateState();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    GameState state = data.getState();
+    state = data.getState();
     switch(state) {
       case GameState.PRE_GAME: {
         return Scaffold(
@@ -77,6 +85,7 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_CHAT: {
+        startTimer(10);
         return Scaffold (
           appBar: AppBar(
             title: Text("Daytime Chatroom"),
@@ -89,21 +98,57 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_VOTE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Vote!"),
+          ),
+        );
       }
       case GameState.NIGHT_CHAT: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Mafia Chat"),
+          ),
+        );
       }
       case GameState.NIGHT_VOTE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Vote!"),
+          ),
+        );
       }
       case GameState.DOCTOR_CHOOSE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Choose who to save!"),
+          ),
+        );
       }
       case GameState.DETECTIVE_CHOOSE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Choose who to investigate!"),
+          ),
+        );
       }
     }
+  }
+
+  void startTimer(int sec) {
+    if (_timerStarted) return;
+    _timerStarted = true;
+    Timer(Duration(seconds: sec), () {
+      _timerStarted = false;
+      setState(() {
+        data.updateState();
+      });
+    });
   }
 
   Widget buildChatComponents() {
