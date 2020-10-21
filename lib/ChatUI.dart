@@ -114,7 +114,7 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
-    if (data.connectedPlayers.length == 4) {
+    if (data.connectedPlayers.length == 7) {
       setState(() {
         data.startGame(data.connectedPlayers);
         data.updateState();
@@ -154,7 +154,7 @@ class _ChatroomState extends State<Chatroom> {
             state = GameState.GAME_OVER;
           });
         }
-        startTimer(10);
+        startTimer(30);
         return Scaffold (
           appBar: AppBar(
             title: Text("Daytime Chatroom"),
@@ -179,7 +179,7 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.NIGHT_CHAT: {
-        startTimer(10);
+        startTimer(30);
         if (player.role != Role.MAFIA.toString()) {
           return offRoleScreen();
         }
