@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
@@ -12,9 +11,12 @@ import 'Role.dart';
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
   final List<String> _mafiaMessageHistory = new List();
+  final String name;
+
+  Chatroom(this.name) {}
 
   @override
-  _ChatroomState createState() => _ChatroomState();
+  _ChatroomState createState() => _ChatroomState(name);
 }
 
 class _ChatroomState extends State<Chatroom> {
@@ -28,10 +30,12 @@ class _ChatroomState extends State<Chatroom> {
   bool _voted;
   bool _tookRoleAction;
 
+  _ChatroomState(this.name) {}
+
   void initState() {
     super.initState();
     data = Data();
-    player = User("You", "127.0.0.1");
+    player = User(name, "127.0.0.1");
     data.addUser(player);
     _timerStarted = false;
     _voted = false;
@@ -134,6 +138,11 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_CHAT: {
+        if (data.game.isOver()) {
+          setState(() {
+            state = GameState.GAME_OVER;
+          });
+        }
         startTimer(10);
         return Scaffold (
           appBar: AppBar(
@@ -207,6 +216,21 @@ class _ChatroomState extends State<Chatroom> {
           ),
         );
       }
+      case GameState.GAME_OVER: {
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Game Over"),
+          ),
+          body: Container(
+            child: Center (
+              child: Text(
+                getGameOverText(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -221,6 +245,11 @@ class _ChatroomState extends State<Chatroom> {
         data.updateState();
       });
     });
+  }
+
+  String getGameOverText() {
+    if (data.game.scumCount == 0) return "The town has won!";
+    else return "The mafia has won!";
   }
 
   Widget buildChatComponents() {
@@ -245,8 +274,7 @@ class _ChatroomState extends State<Chatroom> {
               onChanged: (text) {
                 name = text;
               },
-              decoration: InputDecoration(
-                  hintText: 'Enter Name')
+              decoration: InputDecoration(hintText: 'Enter Name'),
           ),
           SizedBox(height: 10),
           TextField(
