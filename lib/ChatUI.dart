@@ -6,6 +6,7 @@ import 'package:text_messenger/MafiaGame.dart';
 import 'Data.dart';
 import 'Dart:convert';
 import 'GameState.dart';
+import 'MafiaGame.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
@@ -53,13 +54,46 @@ class _ChatroomState extends State<Chatroom> {
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
-    Switch(MafiaGame){
-      case GameState.DAY_CHAT: {
-
+    String state = data.getState().toString();
+    Message received;
+    switch(state) {
+      case 'PRE_GAME': {
+        print("pre");
+        received = data.receiveMessage(jsonString, ip);
+        addInputToMessageList(received);
       }
+      break;
+
+      case 'NIGHT_CHAT':
+      case 'DAY_CHAT': {
+        print("chat");
+        received = data.receiveMessage(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
+
+      case 'DAY_VOTE':
+      case 'NIGHT_VOTE':{
+        print("vote");
+        received = data.receiveVote(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
+
+      case 'DETECTIVE_CHOOSE':{
+        print('detective');
+        received = data.receiveDetective(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
+
+      case 'DOCTOR_CHOOSE': {
+        print('doctor');
+        received = data.receiveDoctor(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
     }
-    Message received = data.receiveMessage(jsonString, ip);
-    addInputToMessageList(received.contents);
   }
 
   void addUser(){
@@ -190,8 +224,8 @@ class _ChatroomState extends State<Chatroom> {
     return TextField(
       controller: _controller,
       onSubmitted: (String value) {
-        addInputToMessageList(value);
         message = Message(value, player);
+        addInputToMessageList(message);
         print("(" + message.sender.name + " " + message.sender.ipAddr + "): " + message.contents);
         data.sendToAll(message);
       },
@@ -202,10 +236,10 @@ class _ChatroomState extends State<Chatroom> {
     );
   }
 
-  void addInputToMessageList(String input) {
+  void addInputToMessageList(Message message) {
     setState(() {
       _controller.clear();
-      widget._messageHistory.add(input);
+      widget._messageHistory.add(message.sender.name + ": " + message.contents);
     });
   }
 

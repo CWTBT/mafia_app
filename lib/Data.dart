@@ -65,20 +65,24 @@ class Data {
     return message;
   }
 
-  Message receiveVote(String jsonString){
-
+  Message receiveVote(String jsonString, String ip){
+    Message message = deserializeMessage(jsonString, ip);
+    messageHistory.add(message);
   }
 
-  Message receiveMafia(String jsonString){
-
+  Message receiveMafia(String jsonString, String ip){
+    Message message = deserializeMessage(jsonString, ip);
+    mafiaMessageHistory.add(message);
   }
 
-  Message receiveDoctor(String jsonString){
-
+  Message receiveDoctor(String jsonString, String ip){
+    Message message = deserializeMessage(jsonString, ip);
+    messageHistory.add(message);
   }
 
-  Message receiveDetective(String jsonString){
-
+  Message receiveDetective(String jsonString, String ip){
+    Message message = deserializeMessage(jsonString, ip);
+    messageHistory.add(message);
   }
 
   Message deserializeMessage(String jsonString, String ip){
