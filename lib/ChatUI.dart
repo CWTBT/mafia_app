@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'Data.dart';
-import 'Dart:convert';
 import 'GameState.dart';
 import 'User.dart';
 import 'Message.dart';
@@ -21,12 +20,15 @@ class _ChatroomState extends State<Chatroom> {
   User player;
   Message message;
   String name, ip;
+  GameState state;
+  bool _timerStarted;
 
   void initState() {
     super.initState();
     data = Data();
     player = User("You", "127.0.0.1");
     data.addUser(player);
+    _timerStarted = false;
     setupServer();
   }
 
@@ -98,11 +100,16 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
+    if (data.connectedPlayers.length == 4) {
+      setState(() {
+        data.updateState();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    GameState state = data.getState();
+    state = data.getState();
     switch(state) {
       case GameState.PRE_GAME: {
         return Scaffold(
@@ -117,6 +124,7 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_CHAT: {
+        startTimer(10);
         return Scaffold (
           appBar: AppBar(
             title: Text("Daytime Chatroom"),
@@ -129,21 +137,78 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_VOTE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Vote!"),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          )
+        );
       }
       case GameState.NIGHT_CHAT: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Mafia Chat"),
+          ),
+          body: Container (
+            padding: EdgeInsets.all(10.0),
+            color: Colors.grey[300],
+            child: buildChatComponents(),
+          ),
+        );
       }
       case GameState.NIGHT_VOTE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Vote!"),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          ),
+        );
       }
       case GameState.DOCTOR_CHOOSE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Choose who to save!"),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          ),
+        );
       }
       case GameState.DETECTIVE_CHOOSE: {
-        return Scaffold();
+        startTimer(10);
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Choose who to investigate!"),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          ),
+        );
       }
     }
+  }
+
+  void startTimer(int sec) {
+    if (_timerStarted) return;
+    _timerStarted = true;
+    Timer(Duration(seconds: sec), () {
+      _timerStarted = false;
+      setState(() {
+        data.updateState();
+      });
+    });
   }
 
   Widget buildChatComponents() {
@@ -250,6 +315,21 @@ class _ChatroomState extends State<Chatroom> {
         color: Colors.black,
         fontSize: 30,
       ),
+    );
+  }
+
+  Widget buildVoteIcons() {
+    List<Widget> children = [];
+    for (var i = 0; i < data.connectedPlayers.length; i++) {
+      Widget voteButton = RaisedButton (
+        child: Text(data.connectedPlayers[i]),
+      );
+      children.add(voteButton);
+    }
+    return Center(
+        child: Column(
+          children: children,
+        )
     );
   }
 }
