@@ -127,6 +127,11 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_CHAT: {
+        if (data.game.isOver()) {
+          setState(() {
+            state = GameState.GAME_OVER;
+          });
+        }
         startTimer(10);
         return Scaffold (
           appBar: AppBar(
@@ -200,6 +205,21 @@ class _ChatroomState extends State<Chatroom> {
           ),
         );
       }
+      case GameState.GAME_OVER: {
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Game Over"),
+          ),
+          body: Container(
+            child: Center (
+              child: Text(
+                getGameOverText(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -214,6 +234,11 @@ class _ChatroomState extends State<Chatroom> {
         data.updateState();
       });
     });
+  }
+
+  String getGameOverText() {
+    if (data.game.scumCount == 0) return "The town has won!";
+    else return "The mafia has won!";
   }
 
   Widget buildChatComponents() {
@@ -238,8 +263,7 @@ class _ChatroomState extends State<Chatroom> {
               onChanged: (text) {
                 name = text;
               },
-              decoration: InputDecoration(
-                  hintText: 'Enter Name')
+              decoration: InputDecoration(hintText: 'Enter Name'),
           ),
           SizedBox(height: 10),
           TextField(
