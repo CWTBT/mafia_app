@@ -410,7 +410,6 @@ class _ChatroomState extends State<Chatroom> {
             if (_voted) return;
             if (!data.getUser(userName).isAlive) return;
             _voted = true;
-            data.game.killUser(userName);
             data.sendToAll(m);
           }
         }),
