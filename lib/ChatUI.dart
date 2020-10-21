@@ -2,11 +2,9 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:text_messenger/MafiaGame.dart';
 import 'Data.dart';
 import 'Dart:convert';
 import 'GameState.dart';
-import 'MafiaGame.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();

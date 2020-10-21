@@ -116,48 +116,6 @@ class Data {
   }
 }
 
-class Message {
-  final String contents;
-  final User sender;
-
-  Message.fromJson(Map<String, dynamic> json)
-      : contents = json['contents'],
-        sender = User.fromJson(json['sender']);
-
-  Map<String, dynamic> toJson() =>
-      {
-        'contents': contents,
-        'sender': sender.toJson(),
-      };
-
-  Message(this.contents, this.sender);
-}
-
-class User {
-  final String name;
-  final String ipAddr;
-  bool isAlive = true;
-  String role;
-
-  User.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        ipAddr = json['ipAddr'],
-        role = json['role'];
-
-  Map<String, dynamic> toJson() =>
-      {
-        'name': name,
-        'ipAddr': ipAddr,
-        'role': role
-      };
-
-  String toString() {
-    return name;
-  }
-
-  User(this.name, this.ipAddr);
-}
-
 class SocketOutcome {
   String _errorMessage;
 
