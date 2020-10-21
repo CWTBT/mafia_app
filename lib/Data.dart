@@ -13,7 +13,7 @@ class Data {
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
   Map votes = new Map();
-  MafiaGame game;
+  MafiaGame game = new MafiaGame();
   String myIp;
 
   void addUser(User user) {
