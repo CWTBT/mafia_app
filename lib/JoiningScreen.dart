@@ -4,26 +4,23 @@ import 'package:flutter/material.dart';
 class joiningScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Scaffold (
+        body:Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-              children: [Container(
+              Center (
                 child: Text("Searching for host..."),
               ),
-              RaisedButton(
-                onPressed: () {Navigator.pop(context);},
-                child: Text("Cancel"),
-                ),
-                ],
+              Center (
+                child: RaisedButton(
+                  onPressed: () {Navigator.pop(context);},
+                  child: Text("Cancel"),
+                )
               ),
             ],
           ),
-        ),
+        )
     );
   }
-
 }
