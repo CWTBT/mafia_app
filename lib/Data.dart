@@ -14,6 +14,7 @@ class Data {
   List<Message> mafiaMessageHistory = [];
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
+  Map<String, String> playerRoles = Map<String, String>();
   Map votes = new Map();
   MafiaGame game = new MafiaGame();
   String myIp;
@@ -45,9 +46,34 @@ class Data {
     });
   }
 
+  Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
+    try {
+      Map<String,dynamic> msgJson = messageSent.toJson();
+      Socket socket = await Socket.connect(ipAddr, ourPort);
+      if(playerRoles.isNotEmpty)
+        socket.write(jsonEncode(msgJson) + jsonEncode(playerRoles) + jsonEncode(playerIPs) + jsonEncode(connectedPlayers));
+      else
+        socket.write(jsonEncode(msgJson) + jsonEncode(playerIPs) + jsonEncode(connectedPlayers));
+      socket.close();
+      return SocketOutcome();
+    } on SocketException catch (e) {
+      print("didn't send to: " + ipAddr);
+      return SocketOutcome(errorMsg: e.message);
+    }
+  }
+
   Message receiveMessage(String jsonString, String ip) {
-    Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String msgString = jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1);
+    jsonString.replaceFirst(msgString, "");
+    Map userMap = jsonDecode(msgString);
+    Message temp = Message.fromJson(userMap);
+    Message received = Message(temp.contents, User(temp.sender.name, ip));
+    if(jsonString.indexOf("{") != -1){
+      String roleString = jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1);
+      Map<String, String> roleMap = jsonDecode(roleString);
+      if(roleMap.isNotEmpty)
+        playerRoles = roleMap;
+    }
     String listIp = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
     jsonString.replaceFirst(listIp, " ");
     String listName = jsonString.substring(jsonString.indexOf("["), jsonString.indexOf("]") + 1);
@@ -55,7 +81,7 @@ class Data {
     List<dynamic> namesList = jsonDecode(listName);
     if(!playerIPs.contains(ip)) {
       myIp = ipList[ipList.length - 1];
-      addUser(User(message.sender.name, ip));
+      addUser(User(received.sender.name, ip));
     }
     if(playerIPs.length < ipList.length){
       for(int i = 0; i < ipList.length; i++){
@@ -64,7 +90,8 @@ class Data {
         }
       }
     }
-    return message;
+    messageHistory.add(received);
+    return received;
   }
 
   void receiveVote(String jsonString, String ip){
@@ -93,7 +120,6 @@ class Data {
   }
 
   Message deserializeMessage(String jsonString, String ip){
-    jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
     Map userMap = jsonDecode(jsonString);
     Message temp = Message.fromJson(userMap);
     Message received = Message(temp.contents, User(temp.sender.name, ip));
@@ -109,20 +135,7 @@ class Data {
     User u = game.getUser(userName);
     return game.roleMap[u];
   }
-
-  Future<SocketOutcome> send(Message messageSent, String ipAddr) async {
-    try {
-      Map<String,dynamic> msgJson = messageSent.toJson();
-      Socket socket = await Socket.connect(ipAddr, ourPort);
-      socket.write(jsonEncode(msgJson) + jsonEncode(playerIPs) + jsonEncode(connectedPlayers));
-      socket.close();
-      return SocketOutcome();
-    } on SocketException catch (e) {
-      print("didn't send to: " + ipAddr);
-      return SocketOutcome(errorMsg: e.message);
-    }
-  }
-
+  
   GameState getState() {
     return GameState.values[game.stateValue];
   }
