@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'Data.dart';
-import 'Dart:convert';
 import 'GameState.dart';
 
 class Chatroom extends StatefulWidget {
@@ -61,7 +60,7 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
-    if (data.connectedPlayers.length == 7) {
+    if (data.connectedPlayers.length == 4) {
       setState(() {
         data.updateState();
       });
@@ -103,6 +102,10 @@ class _ChatroomState extends State<Chatroom> {
           appBar: AppBar(
             title: Text("Vote!"),
           ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          )
         );
       }
       case GameState.NIGHT_CHAT: {
@@ -110,6 +113,11 @@ class _ChatroomState extends State<Chatroom> {
         return Scaffold(
           appBar: AppBar (
             title: Text("Mafia Chat"),
+          ),
+          body: Container (
+            padding: EdgeInsets.all(10.0),
+            color: Colors.grey[300],
+            child: buildChatComponents(),
           ),
         );
       }
@@ -119,6 +127,10 @@ class _ChatroomState extends State<Chatroom> {
           appBar: AppBar (
             title: Text("Vote!"),
           ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          ),
         );
       }
       case GameState.DOCTOR_CHOOSE: {
@@ -127,6 +139,10 @@ class _ChatroomState extends State<Chatroom> {
           appBar: AppBar (
             title: Text("Choose who to save!"),
           ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
+          ),
         );
       }
       case GameState.DETECTIVE_CHOOSE: {
@@ -134,6 +150,10 @@ class _ChatroomState extends State<Chatroom> {
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to investigate!"),
+          ),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: buildVoteIcons(),
           ),
         );
       }
@@ -255,6 +275,21 @@ class _ChatroomState extends State<Chatroom> {
         color: Colors.black,
         fontSize: 30,
       ),
+    );
+  }
+
+  Widget buildVoteIcons() {
+    List<Widget> children = [];
+    for (var i = 0; i < data.connectedPlayers.length; i++) {
+      Widget voteButton = RaisedButton (
+        child: Text(data.connectedPlayers[i]),
+      );
+      children.add(voteButton);
+    }
+    return Center(
+        child: Column(
+          children: children,
+        )
     );
   }
 }
