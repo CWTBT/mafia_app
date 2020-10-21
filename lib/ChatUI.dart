@@ -114,9 +114,20 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
-    if (data.connectedPlayers.length == 4) {
+    if (data.connectedPlayers.length == 7) {
       setState(() {
+        data.startGame(data.connectedPlayers);
         data.updateState();
+        Role r = data.getRole(player.name);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Role Assignment"),
+                content: Text("Your role is "+r.toString()),
+              );
+            }
+        );
       });
     }
   }
@@ -143,7 +154,7 @@ class _ChatroomState extends State<Chatroom> {
             state = GameState.GAME_OVER;
           });
         }
-        startTimer(10);
+        startTimer(30);
         return Scaffold (
           appBar: AppBar(
             title: Text("Daytime Chatroom"),
@@ -168,7 +179,10 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.NIGHT_CHAT: {
-        startTimer(10);
+        startTimer(30);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Mafia Chat"),
@@ -182,6 +196,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.NIGHT_VOTE: {
         startTimer(10);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Vote!"),
@@ -194,6 +211,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DOCTOR_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DOCTOR.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to save!"),
@@ -206,6 +226,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DETECTIVE_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DETECTIVE.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to investigate!"),
@@ -378,6 +401,17 @@ class _ChatroomState extends State<Chatroom> {
     );
   }
 
+  Widget offRoleScreen() {
+    return Scaffold(
+      appBar: AppBar (
+        title: Text("Other roles are acting..."),
+      ),
+      body: Container(
+        color: Colors.grey[500],
+      ),
+    );
+  }
+
   Widget buildVoteIcons() {
     List<Widget> children = [];
     for (var i = 0; i < data.connectedPlayers.length; i++) {
@@ -407,6 +441,7 @@ class _ChatroomState extends State<Chatroom> {
           }
           else {
             if (_voted) return;
+            if (!data.getUser(userName).isAlive) return;
             _voted = true;
             data.sendToAll(m);
           }

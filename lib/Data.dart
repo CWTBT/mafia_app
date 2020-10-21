@@ -27,6 +27,7 @@ class Data {
         Message added = Message(user.name + " Connected", user);
         sendToAll(added);
         messageHistory.add(added);
+        game.userList.add(user);
       }else{
         print("User is already added");
       }
@@ -94,6 +95,10 @@ class Data {
     return received;
   }
 
+  void startGame(List<String> nameList) {
+    game.initialize();
+  }
+
   void receiveVote(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
     String target = message.contents;
@@ -132,8 +137,12 @@ class Data {
   }
 
   Role getRole(String userName) {
-    User u = game.getUser(userName);
+    User u = getUser(userName);
     return game.roleMap[u];
+  }
+
+  User getUser(String userName) {
+    return game.namesToPlayers[userName];
   }
   
   GameState getState() {
