@@ -88,7 +88,7 @@ class Data {
   void receiveDetective(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
     String target = message.contents;
-    Role r = game.getRole(target);
+    Role r = getRole(target);
     print(target + "'s role is " + r.toString());
   }
 
@@ -103,6 +103,11 @@ class Data {
   void resolveVotes() {
     List<String> mostVoted = game.countVotes(votes);
     if(mostVoted.length == 0) game.killUser(mostVoted[0]);
+  }
+
+  Role getRole(String userName) {
+    User u = game.getUser(userName);
+    return game.roleMap[u];
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {

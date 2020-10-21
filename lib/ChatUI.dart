@@ -6,6 +6,7 @@ import 'Data.dart';
 import 'GameState.dart';
 import 'User.dart';
 import 'Message.dart';
+import 'Role.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
@@ -23,6 +24,8 @@ class _ChatroomState extends State<Chatroom> {
   String name, ip;
   GameState state;
   bool _timerStarted;
+  bool _voted;
+  bool _tookRoleAction;
 
   void initState() {
     super.initState();
@@ -30,6 +33,8 @@ class _ChatroomState extends State<Chatroom> {
     player = User("You", "127.0.0.1");
     data.addUser(player);
     _timerStarted = false;
+    _voted = false;
+    _tookRoleAction = false;
     setupServer();
   }
 
@@ -203,6 +208,8 @@ class _ChatroomState extends State<Chatroom> {
     _timerStarted = true;
     Timer(Duration(seconds: sec), () {
       _timerStarted = false;
+      _voted = false;
+      _tookRoleAction = false;
       setState(() {
         data.updateState();
       });
@@ -339,11 +346,35 @@ class _ChatroomState extends State<Chatroom> {
   Widget buildVoteIcons() {
     List<Widget> children = [];
     for (var i = 0; i < data.connectedPlayers.length; i++) {
+      String userName = data.connectedPlayers[i];
       Widget voteButton = RaisedButton (
-        child: Text(data.connectedPlayers[i]),
+        child: Text(userName),
         onPressed: (() {
-          Message m = new Message(data.connectedPlayers[i], player);
-          data.sendToAll(m);
+          Message m = new Message(userName, player);
+          if (state == GameState.DETECTIVE_CHOOSE) {
+            if (_tookRoleAction) return;
+            _tookRoleAction = true;
+            Role r = data.getRole(userName);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Investigation Results"),
+                  content: Text(userName+"'s role is "+r.toString()),
+                );
+              }
+            );
+          }
+          else if (state == GameState.DOCTOR_CHOOSE) {
+            if (_tookRoleAction) return;
+            _tookRoleAction = true;
+            data.sendToAll(m);
+          }
+          else {
+            if (_voted) return;
+            _voted = true;
+            data.sendToAll(m);
+          }
         }),
       );
       children.add(voteButton);
