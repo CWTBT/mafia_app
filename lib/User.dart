@@ -21,6 +21,6 @@ class User {
   String toString() {
     return name;
   }
-  
+
   User(this.name, this.ipAddr);
 }

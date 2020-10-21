@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'Data.dart';
 import 'Dart:convert';
 import 'GameState.dart';
+import 'User.dart';
+import 'Message.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();

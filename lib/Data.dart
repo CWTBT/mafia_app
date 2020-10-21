@@ -4,6 +4,8 @@ import 'Dart:convert';
 import 'MafiaGame.dart';
 import 'Role.dart';
 import 'GameState.dart';
+import 'User.dart';
+import 'Message.dart';
 
 const int ourPort = 8080;
 
@@ -115,6 +117,7 @@ class Data {
     else game.stateValue += 1;
   }
 }
+
 
 class SocketOutcome {
   String _errorMessage;

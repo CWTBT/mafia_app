@@ -1,6 +1,8 @@
 import 'Data.dart';
 import 'GameState.dart';
 import 'Role.dart';
+import 'User.dart';
+import 'Message.dart';
 
 class MafiaGame {
   List<User> userList;
