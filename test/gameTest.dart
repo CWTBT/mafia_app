@@ -1,7 +1,10 @@
+import 'package:flutter_app/MafiaGame.dart';
+import 'package:flutter_app/Role.dart';
+import 'package:flutter_app/User.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:text_messenger/MafiaGame.dart';
-import 'package:text_messenger/Role.dart';
-import 'package:text_messenger/User.dart';
+import 'package:flutter_app/MafiaGame.dart';
+import 'package:flutter_app/Role.dart';
+import 'package:flutter_app/User.dart';
 
 void main () {
   List<String> playerNamesList = ["Alice", "Bob", "Carlos", "Diane", "Evan", "Frank", "Gibby"];
