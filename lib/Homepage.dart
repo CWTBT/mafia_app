@@ -12,7 +12,8 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mafia Game")
+        backgroundColor: Colors.black,
+        title: Text("Mafia Game"),
       ),
       body: layout(context)
       );
@@ -23,6 +24,8 @@ class Homepage extends StatelessWidget {
          child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Image(image: AssetImage('assets/MafiaLogo.png'),
+              height: 280, width: 280),
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: new TextField(
@@ -37,7 +40,7 @@ class Homepage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: RaisedButton(
-                  color: Colors.purple, onPressed: () { Navigator.push(
+                  color: Colors.deepPurpleAccent, onPressed: () { Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => new Chatroom()),
                   );
@@ -48,7 +51,7 @@ class Homepage extends StatelessWidget {
               Container(
                   padding: EdgeInsets.all(10.0),
                   child: RaisedButton(
-                    color: Colors.purpleAccent, onPressed: () { Navigator.push(
+                    color: Colors.deepPurpleAccent, onPressed: () { Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => new joiningScreen()),
                     );
