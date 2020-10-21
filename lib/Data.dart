@@ -90,7 +90,6 @@ class Data {
 class Message {
   final String contents;
   final User sender;
-  //final int timeStamp;
 
   Message.fromJson(Map<String, dynamic> json)
       : contents = json['contents'],
@@ -108,6 +107,7 @@ class Message {
 class User {
   final String name;
   final String ipAddr;
+  bool isAlive = true;
   String role;
 
   User.fromJson(Map<String, dynamic> json)
@@ -119,6 +119,10 @@ class User {
         'name': name,
         'ipAddr': ipAddr,
       };
+
+  String toString() {
+    return name;
+  }
 
   User(this.name, this.ipAddr);
 }

@@ -1,0 +1,8 @@
+enum GameState {
+  DAY_CHAT,
+  DAY_VOTE,
+  NIGHT_CHAT,
+  NIGHT_VOTE,
+  DETECTIVE_CHOOSE,
+  DOCTOR_CHOOSE,
+}
