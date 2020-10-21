@@ -118,6 +118,16 @@ class _ChatroomState extends State<Chatroom> {
       setState(() {
         data.startGame(data.connectedPlayers);
         data.updateState();
+        Role r = data.getRole(player.name);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Role Assignment"),
+                content: Text("Your role is "+r.toString()),
+              );
+            }
+        );
       });
     }
   }
@@ -170,6 +180,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.NIGHT_CHAT: {
         startTimer(10);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Mafia Chat"),
@@ -183,6 +196,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.NIGHT_VOTE: {
         startTimer(10);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Vote!"),
@@ -195,6 +211,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DOCTOR_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DOCTOR.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to save!"),
@@ -207,6 +226,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DETECTIVE_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DETECTIVE.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to investigate!"),
@@ -375,6 +397,17 @@ class _ChatroomState extends State<Chatroom> {
       style: TextStyle(
         color: Colors.black,
         fontSize: 30,
+      ),
+    );
+  }
+
+  Widget offRoleScreen() {
+    return Scaffold(
+      appBar: AppBar (
+        title: Text("Other roles are acting..."),
+      ),
+      body: Container(
+        color: Colors.grey[500],
       ),
     );
   }
