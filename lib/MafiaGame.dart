@@ -1,15 +1,12 @@
-import 'Data.dart';
-import 'GameState.dart';
 import 'Role.dart';
 import 'User.dart';
-import 'Message.dart';
 
 class MafiaGame {
-  List<User> userList;
+  List<User> userList = new List();
   int scumCount;
   int townCount;
   Map roleMap = new Map();
-  Map _namesToPlayers = new Map();
+  Map namesToPlayers = new Map();
   int stateValue;
 
   MafiaGame() {
@@ -21,12 +18,11 @@ class MafiaGame {
 
   void _initializeNamesMap() {
     userList.forEach((u) {
-      _namesToPlayers[u.name] = u;
+      namesToPlayers[u.name] = u;
     });
   }
 
-  void initialize(List<User> uList) {
-    userList = uList;
+  void initialize() {
     _initializeRoles();
     _initializeNamesMap();
   }
@@ -67,22 +63,20 @@ class MafiaGame {
   }
 
   void killUser(String uName) {
-    User u = getUser(uName);
+    User u = namesToPlayers[uName];
     u.isAlive = false;
     roleMap[u] == Role.MAFIA ? scumCount -= 1 : townCount -= 1;
   }
 
   void reviveUser(String uName) {
-    User u = getUser(uName);
+    User u = namesToPlayers[uName];
     u.isAlive = true;
     roleMap[u] == Role.MAFIA ? scumCount += 1 : townCount += 1;
   }
 
-  User getUser(String userName) {
-    return _namesToPlayers[userName];
-  }
-
   bool isOver() {
-    return scumCount == townCount ? true : false;
+    if (scumCount == townCount) return true;
+    else if (scumCount == 0) return true;
+    else return false;
   }
 }

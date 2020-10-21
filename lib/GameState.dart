@@ -6,4 +6,5 @@ enum GameState {
   NIGHT_VOTE,
   DETECTIVE_CHOOSE,
   DOCTOR_CHOOSE,
+  GAME_OVER,
 }

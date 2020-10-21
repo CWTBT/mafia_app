@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ChatUI.dart';
+import 'package:text_messenger/Homepage.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Chatroom(),
+      home: Homepage(),
     );
   }
 }

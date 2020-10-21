@@ -6,12 +6,17 @@ import 'Data.dart';
 import 'GameState.dart';
 import 'User.dart';
 import 'Message.dart';
+import 'Role.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
+  final List<String> _mafiaMessageHistory = new List();
+  final String name;
+
+  Chatroom(this.name) {}
 
   @override
-  _ChatroomState createState() => _ChatroomState();
+  _ChatroomState createState() => _ChatroomState(name);
 }
 
 class _ChatroomState extends State<Chatroom> {
@@ -22,13 +27,19 @@ class _ChatroomState extends State<Chatroom> {
   String name, ip;
   GameState state;
   bool _timerStarted;
+  bool _voted;
+  bool _tookRoleAction;
+
+  _ChatroomState(this.name) {}
 
   void initState() {
     super.initState();
     data = Data();
-    player = User("You", "127.0.0.1");
+    player = User(name, "127.0.0.1");
     data.addUser(player);
     _timerStarted = false;
+    _voted = false;
+    _tookRoleAction = false;
     setupServer();
   }
 
@@ -66,7 +77,13 @@ class _ChatroomState extends State<Chatroom> {
       }
       break;
 
-      case 'NIGHT_CHAT':
+      case 'NIGHT_CHAT':{
+        print("mafia chat");
+        received = data.receiveMafia(jsonString, ip);
+        addInputToMessageList(received);
+      }
+      break;
+
       case 'DAY_CHAT': {
         print("chat");
         received = data.receiveMessage(jsonString, ip);
@@ -77,22 +94,19 @@ class _ChatroomState extends State<Chatroom> {
       case 'DAY_VOTE':
       case 'NIGHT_VOTE':{
         print("vote");
-        received = data.receiveVote(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveVote(jsonString, ip);
       }
       break;
 
       case 'DETECTIVE_CHOOSE':{
         print('detective');
-        received = data.receiveDetective(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveDetective(jsonString, ip);
       }
       break;
 
       case 'DOCTOR_CHOOSE': {
         print('doctor');
-        received = data.receiveDoctor(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveDoctor(jsonString, ip);
       }
       break;
     }
@@ -100,9 +114,20 @@ class _ChatroomState extends State<Chatroom> {
 
   void addUser(){
     data.addUser(User(name, ip));
-    if (data.connectedPlayers.length == 4) {
+    if (data.connectedPlayers.length == 7) {
       setState(() {
+        data.startGame(data.connectedPlayers);
         data.updateState();
+        Role r = data.getRole(player.name);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Role Assignment"),
+                content: Text("Your role is "+r.toString()),
+              );
+            }
+        );
       });
     }
   }
@@ -124,7 +149,12 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.DAY_CHAT: {
-        startTimer(10);
+        if (data.game.isOver()) {
+          setState(() {
+            state = GameState.GAME_OVER;
+          });
+        }
+        startTimer(30);
         return Scaffold (
           appBar: AppBar(
             title: Text("Daytime Chatroom"),
@@ -149,7 +179,10 @@ class _ChatroomState extends State<Chatroom> {
         );
       }
       case GameState.NIGHT_CHAT: {
-        startTimer(10);
+        startTimer(30);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Mafia Chat"),
@@ -163,6 +196,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.NIGHT_VOTE: {
         startTimer(10);
+        if (player.role != Role.MAFIA.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Vote!"),
@@ -175,6 +211,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DOCTOR_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DOCTOR.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to save!"),
@@ -187,6 +226,9 @@ class _ChatroomState extends State<Chatroom> {
       }
       case GameState.DETECTIVE_CHOOSE: {
         startTimer(10);
+        if (player.role != Role.DETECTIVE.toString()) {
+          return offRoleScreen();
+        }
         return Scaffold(
           appBar: AppBar (
             title: Text("Choose who to investigate!"),
@@ -194,6 +236,21 @@ class _ChatroomState extends State<Chatroom> {
           body: Container(
             padding: EdgeInsets.all(10.0),
             child: buildVoteIcons(),
+          ),
+        );
+      }
+      case GameState.GAME_OVER: {
+        return Scaffold(
+          appBar: AppBar (
+            title: Text("Game Over"),
+          ),
+          body: Container(
+            child: Center (
+              child: Text(
+                getGameOverText(),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
         );
       }
@@ -205,10 +262,17 @@ class _ChatroomState extends State<Chatroom> {
     _timerStarted = true;
     Timer(Duration(seconds: sec), () {
       _timerStarted = false;
+      _voted = false;
+      _tookRoleAction = false;
       setState(() {
         data.updateState();
       });
     });
+  }
+
+  String getGameOverText() {
+    if (data.game.scumCount == 0) return "The town has won!";
+    else return "The mafia has won!";
   }
 
   Widget buildChatComponents() {
@@ -233,8 +297,7 @@ class _ChatroomState extends State<Chatroom> {
               onChanged: (text) {
                 name = text;
               },
-              decoration: InputDecoration(
-                  hintText: 'Enter Name')
+              decoration: InputDecoration(hintText: 'Enter Name'),
           ),
           SizedBox(height: 10),
           TextField(
@@ -266,12 +329,22 @@ class _ChatroomState extends State<Chatroom> {
   // Examples of ListView.builder came from the following article:
   // https://medium.com/@DakshHub/flutter-displaying-dynamic-contents-using-listview-builder-f2cedb1a19fb
   Widget buildChatWindow() {
-    return ListView.builder(
-      itemCount: widget._messageHistory.length,
-      itemBuilder: (BuildContext context, int index) {
-        return buildChatMessage(widget._messageHistory[index]);
-      }
-    );
+    if (state == GameState.DAY_CHAT) {
+      return ListView.builder(
+        itemCount: widget._messageHistory.length,
+          itemBuilder: (BuildContext context, int index) {
+            return buildChatMessage(widget._messageHistory[index]);
+          }
+      );
+    }
+    else if (state == GameState.NIGHT_CHAT) {
+      return ListView.builder(
+          itemCount: widget._mafiaMessageHistory.length,
+          itemBuilder: (BuildContext context, int index) {
+            return buildChatMessage(widget._mafiaMessageHistory[index]);
+          }
+      );
+    }
   }
 
   Widget buildInputFieldContainer() {
@@ -302,10 +375,20 @@ class _ChatroomState extends State<Chatroom> {
   }
 
   void addInputToMessageList(Message message) {
-    setState(() {
-      _controller.clear();
-      widget._messageHistory.add(message.sender.name + ": " + message.contents);
-    });
+    if (state == GameState.DAY_CHAT) {
+      setState(() {
+        _controller.clear();
+        widget._messageHistory.add(
+            message.sender.name + ": " + message.contents);
+      });
+    }
+    else if (state == GameState.NIGHT_CHAT) {
+      setState(() {
+        _controller.clear();
+        widget._mafiaMessageHistory.add(
+            message.sender.name + ": " + message.contents);
+      });
+    }
   }
 
   Widget buildChatMessage(String text) {
@@ -318,11 +401,51 @@ class _ChatroomState extends State<Chatroom> {
     );
   }
 
+  Widget offRoleScreen() {
+    return Scaffold(
+      appBar: AppBar (
+        title: Text("Other roles are acting..."),
+      ),
+      body: Container(
+        color: Colors.grey[500],
+      ),
+    );
+  }
+
   Widget buildVoteIcons() {
     List<Widget> children = [];
     for (var i = 0; i < data.connectedPlayers.length; i++) {
+      String userName = data.connectedPlayers[i];
       Widget voteButton = RaisedButton (
-        child: Text(data.connectedPlayers[i]),
+        child: Text(userName),
+        onPressed: (() {
+          Message m = new Message(userName, player);
+          if (state == GameState.DETECTIVE_CHOOSE) {
+            if (_tookRoleAction) return;
+            _tookRoleAction = true;
+            Role r = data.getRole(userName);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Investigation Results"),
+                  content: Text(userName+"'s role is "+r.toString()),
+                );
+              }
+            );
+          }
+          else if (state == GameState.DOCTOR_CHOOSE) {
+            if (_tookRoleAction) return;
+            _tookRoleAction = true;
+            data.sendToAll(m);
+          }
+          else {
+            if (_voted) return;
+            if (!data.getUser(userName).isAlive) return;
+            _voted = true;
+            data.sendToAll(m);
+          }
+        }),
       );
       children.add(voteButton);
     }
