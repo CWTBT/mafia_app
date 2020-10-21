@@ -94,9 +94,10 @@ class Data {
     return received;
   }
 
-  Message receiveVote(String jsonString, String ip){
+  void receiveVote(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    votes[target] == null ? votes[target] = 1 : votes[target] += 1;
   }
 
   Message receiveMafia(String jsonString, String ip){
@@ -104,14 +105,18 @@ class Data {
     mafiaMessageHistory.add(message);
   }
 
-  Message receiveDoctor(String jsonString, String ip){
+  void receiveDoctor(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    game.reviveUser(target);
+    print(target + " has been saved by the Doctor!");
   }
 
-  Message receiveDetective(String jsonString, String ip){
+  void receiveDetective(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    Role r = getRole(target);
+    print(target + "'s role is " + r.toString());
   }
 
   Message deserializeMessage(String jsonString, String ip){
@@ -121,6 +126,16 @@ class Data {
     return received;
   }
 
+  void resolveVotes() {
+    List<String> mostVoted = game.countVotes(votes);
+    if(mostVoted.length == 0) game.killUser(mostVoted[0]);
+  }
+
+  Role getRole(String userName) {
+    User u = game.getUser(userName);
+    return game.roleMap[u];
+  }
+  
   GameState getState() {
     return GameState.values[game.stateValue];
   }

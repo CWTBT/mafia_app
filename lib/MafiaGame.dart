@@ -83,6 +83,8 @@ class MafiaGame {
   }
 
   bool isOver() {
-    return scumCount == townCount ? true : false;
+    if (scumCount == townCount) return true;
+    else if (scumCount == 0) return true;
+    else return false;
   }
 }
