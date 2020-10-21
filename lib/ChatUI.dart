@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'Data.dart';
 import 'Dart:convert';
+import 'GameState.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
@@ -61,16 +62,48 @@ class _ChatroomState extends State<Chatroom> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold (
-      appBar: AppBar(
-        title: Text("Mafia Chatroom"),
-      ),
-      body: Container (
-        padding: EdgeInsets.all(10.0),
-        color: Colors.grey[300],
-        child: buildChatComponents(),
-      ),
-    );
+    GameState state = data.getState();
+    switch(state) {
+      case GameState.PRE_GAME: {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Add Users"),
+          ),
+          body: Container (
+            padding: EdgeInsets.all(10.0),
+            color: Colors.grey[300],
+            child: buildAddUserFields(),
+          ),
+        );
+      }
+      case GameState.DAY_CHAT: {
+        return Scaffold (
+          appBar: AppBar(
+            title: Text("Daytime Chatroom"),
+          ),
+          body: Container (
+            padding: EdgeInsets.all(10.0),
+            color: Colors.grey[300],
+            child: buildChatComponents(),
+          ),
+        );
+      }
+      case GameState.DAY_VOTE: {
+        return Scaffold();
+      }
+      case GameState.NIGHT_CHAT: {
+        return Scaffold();
+      }
+      case GameState.NIGHT_VOTE: {
+        return Scaffold();
+      }
+      case GameState.DOCTOR_CHOOSE: {
+        return Scaffold();
+      }
+      case GameState.DETECTIVE_CHOOSE: {
+        return Scaffold();
+      }
+    }
   }
 
   Widget buildChatComponents() {
@@ -81,21 +114,34 @@ class _ChatroomState extends State<Chatroom> {
             buildChatWindowContainer(),
             SizedBox(height: 10),
             buildInputFieldContainer(),
-            TextField(
-                onChanged: (text) {
-                  name = text;
-                },
-                decoration: InputDecoration(
-                    hintText: 'Enter Name')),
-            TextField(
-                onChanged: (text) {
-                  ip = text;
-                },
-                decoration: InputDecoration(
-                    hintText: 'Enter IP')),
-            FloatingActionButton(child: Icon(Icons.add), onPressed: addUser),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildAddUserFields() {
+    return Center (
+      child: Column (
+        children: [
+          TextField(
+              onChanged: (text) {
+                name = text;
+              },
+              decoration: InputDecoration(
+                  hintText: 'Enter Name')
+          ),
+          SizedBox(height: 10),
+          TextField(
+              onChanged: (text) {
+                ip = text;
+              },
+              decoration: InputDecoration(
+                  hintText: 'Enter IP')
+          ),
+          SizedBox(height: 10),
+          FloatingActionButton(child: Icon(Icons.add), onPressed: addUser),
+        ],
       ),
     );
   }

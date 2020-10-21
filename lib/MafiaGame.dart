@@ -8,13 +8,10 @@ class MafiaGame {
   int townCount;
   Map roleMap = new Map();
   Map _namesToPlayers = new Map();
-  int _stateValue;
+  int stateValue;
 
-  MafiaGame(this.userList) {
-    _initializeRoles();
-    _initializeNamesMap();
-    _stateValue = 0;
-
+  MafiaGame() {
+    stateValue = 0;
     // These are hardcoded since we only allow one configuration of roles.
     scumCount = 2;
     townCount = 5;
@@ -24,6 +21,12 @@ class MafiaGame {
     userList.forEach((u) {
       _namesToPlayers[u.name] = u;
     });
+  }
+
+  void initialize(List<User> uList) {
+    userList = uList;
+    _initializeRoles();
+    _initializeNamesMap();
   }
 
   // Current solution to tied votes is to return a list of highest voted players
@@ -58,6 +61,7 @@ class MafiaGame {
     for (int i = 0; i < userList.length; i++) {
       roleMap[userList[i]] = roleList[i];
     }
+    _initializeNamesMap();
   }
 
   void killUser(String uName) {
@@ -76,16 +80,7 @@ class MafiaGame {
     return _namesToPlayers[userName];
   }
 
-  void progressGameState() {
-    if (_stateValue == 5)  _stateValue = 0;
-    else _stateValue += 1;
-  }
-
   bool isOver() {
     return scumCount == townCount ? true : false;
-  }
-
-  GameState getState() {
-    return GameState.values[_stateValue];
   }
 }
