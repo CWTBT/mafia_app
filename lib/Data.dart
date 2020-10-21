@@ -89,6 +89,10 @@ class Data {
       return SocketOutcome(errorMsg: e.message);
     }
   }
+
+  GameState getState() {
+    return GameState.values[game.stateValue];
+  }
 }
 
 class Message {

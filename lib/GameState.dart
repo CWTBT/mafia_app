@@ -1,4 +1,5 @@
 enum GameState {
+  PRE_GAME,
   DAY_CHAT,
   DAY_VOTE,
   NIGHT_CHAT,
