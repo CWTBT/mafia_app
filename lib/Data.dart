@@ -69,6 +69,18 @@ class Data {
 
   }
 
+  Message receiveMafia(String jsonString){
+
+  }
+
+  Message receiveDoctor(String jsonString){
+
+  }
+
+  Message receiveDetective(String jsonString){
+
+  }
+
   Message deserializeMessage(String jsonString, String ip){
     jsonString = jsonString.substring(0, jsonString.lastIndexOf("}") + 1);
     Map userMap = jsonDecode(jsonString);
@@ -116,12 +128,14 @@ class User {
 
   User.fromJson(Map<String, dynamic> json)
       : name = json['name'],
-        ipAddr = json['ipAddr'];
+        ipAddr = json['ipAddr'],
+        role = json['role'];
 
   Map<String, dynamic> toJson() =>
       {
         'name': name,
         'ipAddr': ipAddr,
+        'role': role
       };
 
   String toString() {

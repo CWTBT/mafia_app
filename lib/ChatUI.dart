@@ -2,8 +2,12 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:text_messenger/MafiaGame.dart';
 import 'Data.dart';
 import 'Dart:convert';
+import 'GameState.dart';
+import 'Role.dart';
+import 'MafiaGame.dart';
 
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
@@ -51,6 +55,11 @@ class _ChatroomState extends State<Chatroom> {
 
   void handleIncomingMessage(String ip, Uint8List incomingData) {
     String jsonString = String.fromCharCodes(incomingData);
+    Switch(MafiaGame){
+      case GameState.DAY_CHAT: {
+
+      }
+    }
     Message received = data.receiveMessage(jsonString, ip);
     addInputToMessageList(received.contents);
   }
