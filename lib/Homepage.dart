@@ -1,4 +1,3 @@
-homepageUI
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'JoiningScreen.dart';
@@ -43,7 +42,7 @@ class Homepage extends StatelessWidget {
                 child: RaisedButton(
                   color: Colors.deepPurpleAccent, onPressed: () { Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => new Chatroom()),
+                  MaterialPageRoute(builder: (context) => new Chatroom(name)),
                   );
                   },
                   child: Text("Host Game"),
