@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'JoiningScreen.dart';
 import 'package:text_messenger/ChatUI.dart';
-import "dart:collection";
 
 
 String name = "";
@@ -39,7 +38,7 @@ class Homepage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Chatroom()),
+                    MaterialPageRoute(builder: (context) => Chatroom(name)),
                   );
                 },
                 color: Colors.deepPurple,
@@ -56,6 +55,7 @@ class Homepage extends StatelessWidget {
                 child: Text("Join Game"),
               ),
               RaisedButton(
+                onPressed:() {},
                 color: Colors.purpleAccent,
                 child: Text("Quit"),
               ),

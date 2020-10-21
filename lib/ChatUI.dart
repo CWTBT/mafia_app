@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
@@ -12,9 +11,12 @@ import 'Role.dart';
 class Chatroom extends StatefulWidget {
   final List<String> _messageHistory = new List();
   final List<String> _mafiaMessageHistory = new List();
+  final String name;
+
+  Chatroom(this.name) {}
 
   @override
-  _ChatroomState createState() => _ChatroomState();
+  _ChatroomState createState() => _ChatroomState(name);
 }
 
 class _ChatroomState extends State<Chatroom> {
@@ -28,10 +30,12 @@ class _ChatroomState extends State<Chatroom> {
   bool _voted;
   bool _tookRoleAction;
 
+  _ChatroomState(this.name) {}
+
   void initState() {
     super.initState();
     data = Data();
-    player = User("You", "127.0.0.1");
+    player = User(name, "127.0.0.1");
     data.addUser(player);
     _timerStarted = false;
     _voted = false;
