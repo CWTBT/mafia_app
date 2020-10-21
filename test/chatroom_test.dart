@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:text_messenger/Data.dart';
+import 'package:text_messenger/User.dart';
+import 'package:text_messenger/Message.dart';
 
 void main(){
   test('Test Add Friend', () {
