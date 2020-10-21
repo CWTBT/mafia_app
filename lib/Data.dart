@@ -67,9 +67,10 @@ class Data {
     return message;
   }
 
-  Message receiveVote(String jsonString, String ip){
+  void receiveVote(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    votes[target] == null ? votes[target] = 1 : votes[target] += 1;
   }
 
   Message receiveMafia(String jsonString, String ip){
@@ -77,14 +78,18 @@ class Data {
     mafiaMessageHistory.add(message);
   }
 
-  Message receiveDoctor(String jsonString, String ip){
+  void receiveDoctor(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    game.reviveUser(target);
+    print(target + " has been saved by the Doctor!");
   }
 
-  Message receiveDetective(String jsonString, String ip){
+  void receiveDetective(String jsonString, String ip){
     Message message = deserializeMessage(jsonString, ip);
-    messageHistory.add(message);
+    String target = message.contents;
+    Role r = game.getRole(target);
+    print(target + "'s role is " + r.toString());
   }
 
   Message deserializeMessage(String jsonString, String ip){
@@ -93,6 +98,11 @@ class Data {
     Message temp = Message.fromJson(userMap);
     Message received = Message(temp.contents, User(temp.sender.name, ip));
     return received;
+  }
+
+  void resolveVotes() {
+    List<String> mostVoted = game.countVotes(votes);
+    if(mostVoted.length == 0) game.killUser(mostVoted[0]);
   }
 
   Future<SocketOutcome> send(Message messageSent, String ipAddr) async {

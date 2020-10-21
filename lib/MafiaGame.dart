@@ -82,6 +82,11 @@ class MafiaGame {
     return _namesToPlayers[userName];
   }
 
+  Role getRole(String userName) {
+    User u = getUser(userName);
+    return roleMap[u];
+  }
+
   bool isOver() {
     return scumCount == townCount ? true : false;
   }

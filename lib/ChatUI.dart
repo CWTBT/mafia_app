@@ -78,22 +78,19 @@ class _ChatroomState extends State<Chatroom> {
       case 'DAY_VOTE':
       case 'NIGHT_VOTE':{
         print("vote");
-        received = data.receiveVote(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveVote(jsonString, ip);
       }
       break;
 
       case 'DETECTIVE_CHOOSE':{
         print('detective');
-        received = data.receiveDetective(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveDetective(jsonString, ip);
       }
       break;
 
       case 'DOCTOR_CHOOSE': {
         print('doctor');
-        received = data.receiveDoctor(jsonString, ip);
-        addInputToMessageList(received);
+        data.receiveDoctor(jsonString, ip);
       }
       break;
     }
@@ -344,6 +341,10 @@ class _ChatroomState extends State<Chatroom> {
     for (var i = 0; i < data.connectedPlayers.length; i++) {
       Widget voteButton = RaisedButton (
         child: Text(data.connectedPlayers[i]),
+        onPressed: (() {
+          Message m = new Message(data.connectedPlayers[i], player);
+          data.sendToAll(m);
+        }),
       );
       children.add(voteButton);
     }
