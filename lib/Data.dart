@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:async';
 import 'Dart:convert';
+import 'MafiaGame.dart';
+import 'Role.dart';
+import 'GameState.dart';
 
 const int ourPort = 8080;
 
@@ -10,6 +13,7 @@ class Data {
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
   Map votes = new Map();
+  MafiaGame game;
   String myIp;
 
   void addUser(User user) {
