@@ -13,7 +13,7 @@ class Data {
   List<String> connectedPlayers = [];
   List<String> playerIPs = [];
   Map votes = new Map();
-  MafiaGame game;
+  MafiaGame game = new MafiaGame();
   String myIp;
 
   void addUser(User user) {
@@ -100,6 +100,15 @@ class Data {
       print("didn't send to: " + ipAddr);
       return SocketOutcome(errorMsg: e.message);
     }
+  }
+
+  GameState getState() {
+    return GameState.values[game.stateValue];
+  }
+
+  void updateState() {
+    if (game.stateValue == 6)  game.stateValue = 1;
+    else game.stateValue += 1;
   }
 }
 
